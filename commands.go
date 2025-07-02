@@ -1,10 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
+
+	"github.com/Giira/pokedexcli/internal/pokeapi"
 )
 
 type cliCommand struct {
@@ -14,9 +15,9 @@ type cliCommand struct {
 }
 
 type config struct {
-
-	next     string
-	previous string
+	client   pokeapi.Client
+	next     *string
+	previous *string
 }
 
 func mapCommands() map[string]cliCommand {
@@ -51,7 +52,7 @@ func commandExit(cfg *config) error {
 }
 
 func commandHelp(cfg *config) error {
-	fmt.Printf("\nWelcome to the Pokedex!\nUsage:\n\n")
+	fmt.Printf("\nWelcome to the Pokedex!\n\nUsage:\n")
 	for _, c := range mapCommands() {
 		fmt.Printf("%s: %s\n", c.name, c.description)
 	}
@@ -60,21 +61,38 @@ func commandHelp(cfg *config) error {
 }
 
 func commandMap(cfg *config) error {
-	endpoint := fmt.Sprintf("https://pokeapi.co/api/v2/location-area/{%v}/", cfg.Next)
-	res, err := http.Get(endpoint)
+	locsRes, err := cfg.client.GetLocAreas(cfg.next)
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
+	cfg.next = locsRes.Next
+	cfg.previous = locsRes.Previous
+
+	for _, loc := range locsRes.Results {
+		fmt.Println(loc.Name)
 	}
-	
-	data := 
+
+	return nil
+
 }
 
-func commandMapb(* config) error {
+func commandMapb(cfg *config) error {
+	if cfg.previous == nil {
+		return errors.New("you're on the first page")
+	}
+
+	locsRes, err := cfg.client.GetLocAreas(cfg.previous)
+	if err != nil {
+		return err
+	}
+
+	cfg.next = locsRes.Next
+	cfg.previous = locsRes.Previous
+
+	for _, loc := range locsRes.Results {
+		fmt.Println(loc.Name)
+	}
+
 	return nil
 }

@@ -1,7 +1,13 @@
 package main
 
-func main() {
-	pokeClient := pokeapi.newClient()
+import (
+	"github.com/Giira/pokedexcli/internal/pokeapi"
+)
 
-	catchInput()
+func main() {
+	pokeApiClient := pokeapi.NewClient()
+	cfg := &config{
+		client: pokeApiClient,
+	}
+	catchInput(cfg)
 }
