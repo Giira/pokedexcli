@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/Giira/pokedexcli/internal/pokecache"
 )
 
 func cleanInput(text string) []string {
@@ -14,7 +16,7 @@ func cleanInput(text string) []string {
 	return output
 }
 
-func catchInput(cfg *config) {
+func catchInput(cfg *config, cache *pokecache.Cache) {
 	coms := mapCommands()
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -35,12 +37,12 @@ func catchInput(cfg *config) {
 					fmt.Println(err)
 				}
 			case "map":
-				err := coms["map"].callback(cfg)
+				err := coms["map"].callback(cfg, cache)
 				if err != nil {
 					fmt.Println(err)
 				}
 			case "mapb":
-				err := coms["mapb"].callback(cfg)
+				err := coms["mapb"].callback(cfg, cache)
 				if err != nil {
 					fmt.Println(err)
 				}

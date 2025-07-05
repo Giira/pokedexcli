@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/Giira/pokedexcli/internal/pokecache"
 )
 
 const (
@@ -23,32 +25,39 @@ func NewClient() Client {
 	}
 }
 
-func (c *Client) GetLocAreas(sectionUrl *string) (LocAreas, error) {
+func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAreas, error) {
 	url := apiUrlBase + "/location-area"
 	if sectionUrl != nil {
 		url = *sectionUrl
 	}
 
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return LocAreas{}, err
-	}
+	data, ok := cache.Get(url)
+	if !ok {
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return LocAreas{}, err
+		}
 
-	res, err := c.httpclient.Do(req)
-	if err != nil {
-		return LocAreas{}, err
-	}
-	defer res.Body.Close()
+		res, err := c.httpclient.Do(req)
+		if err != nil {
+			return LocAreas{}, err
+		}
+		defer res.Body.Close()
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return LocAreas{}, err
-	}
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return LocAreas{}, err
+		}
 
-	locs := LocAreas{}
-	err = json.Unmarshal(body, &locs)
-	if err != nil {
-		return LocAreas{}, err
+		locs := LocAreas{}
+		err = json.Unmarshal(body, &locs)
+		if err != nil {
+			return LocAreas{}, err
+		}
+
+		cache.Add(url, locs)
+	} else {
+
 	}
 
 	return locs, nil

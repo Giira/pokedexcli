@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Giira/pokedexcli/internal/pokeapi"
+	"github.com/Giira/pokedexcli/internal/pokecache"
 )
 
 type cliCommand struct {
@@ -60,8 +61,8 @@ func commandHelp(cfg *config) error {
 	return nil
 }
 
-func commandMap(cfg *config) error {
-	locsRes, err := cfg.client.GetLocAreas(cfg.next)
+func commandMap(cfg *config, cache *pokecache.Cache) error {
+	locsRes, err := cfg.client.GetLocAreas(cfg.next, cache)
 	if err != nil {
 		return err
 	}
@@ -77,12 +78,12 @@ func commandMap(cfg *config) error {
 
 }
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, cache *pokecache.Cache) error {
 	if cfg.previous == nil {
 		return errors.New("you're on the first page")
 	}
 
-	locsRes, err := cfg.client.GetLocAreas(cfg.previous)
+	locsRes, err := cfg.client.GetLocAreas(cfg.previous, cache)
 	if err != nil {
 		return err
 	}
