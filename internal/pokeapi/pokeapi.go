@@ -54,11 +54,7 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 		if err != nil {
 			return LocAreas{}, err
 		}
-
-		cache.Add(url, locs)
 	} else {
 
 	}
-
-	return locs, nil
 }

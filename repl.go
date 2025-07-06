@@ -37,12 +37,12 @@ func catchInput(cfg *config, cache *pokecache.Cache) {
 					fmt.Println(err)
 				}
 			case "map":
-				err := coms["map"].callback(cfg, cache)
+				err := coms["map"].callback(cfg)
 				if err != nil {
 					fmt.Println(err)
 				}
 			case "mapb":
-				err := coms["mapb"].callback(cfg, cache)
+				err := coms["mapb"].callback(cfg)
 				if err != nil {
 					fmt.Println(err)
 				}
