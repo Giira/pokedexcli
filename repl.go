@@ -27,22 +27,22 @@ func catchInput(cfg *config, cache *pokecache.Cache) {
 			input_slice := cleanInput(input)
 			switch input_slice[0] {
 			case "exit":
-				err := coms["exit"].callback(cfg)
+				err := coms["exit"].callback(cfg, cache)
 				if err != nil {
 					fmt.Println(err)
 				}
 			case "help":
-				err := coms["help"].callback(cfg)
+				err := coms["help"].callback(cfg, cache)
 				if err != nil {
 					fmt.Println(err)
 				}
 			case "map":
-				err := coms["map"].callback(cfg)
+				err := coms["map"].callback(cfg, cache)
 				if err != nil {
 					fmt.Println(err)
 				}
 			case "mapb":
-				err := coms["mapb"].callback(cfg)
+				err := coms["mapb"].callback(cfg, cache)
 				if err != nil {
 					fmt.Println(err)
 				}

@@ -16,10 +16,13 @@ type Cache struct {
 	interval time.Duration
 }
 
-func NewCache(interval time.Duration) Cache {
-	return Cache{
+func NewCache(interval time.Duration) *Cache {
+	cache := &Cache{
 		interval: interval,
+		entry:    make(map[string]cacheEntry),
 	}
+	go cache.reapLoop()
+	return cache
 }
 
 func (c *Cache) Add(key string, val []byte) {

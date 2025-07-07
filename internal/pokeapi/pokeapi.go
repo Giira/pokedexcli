@@ -31,7 +31,7 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 		url = *sectionUrl
 	}
 
-	data, ok := cache.Get(url)
+	body, ok := cache.Get(url)
 	if !ok {
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
@@ -49,12 +49,14 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 			return LocAreas{}, err
 		}
 
-		locs := LocAreas{}
-		err = json.Unmarshal(body, &locs)
-		if err != nil {
-			return LocAreas{}, err
-		}
-	} else {
-
+		cache.Add(url, body)
 	}
+
+	locs := LocAreas{}
+	err := json.Unmarshal(body, &locs)
+	if err != nil {
+		return LocAreas{}, err
+	}
+
+	return locs, nil
 }

@@ -13,5 +13,5 @@ func main() {
 	cfg := &config{
 		client: pokeApiClient,
 	}
-	catchInput(cfg, &cache)
+	catchInput(cfg, cache)
 }

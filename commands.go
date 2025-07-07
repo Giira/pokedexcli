@@ -12,7 +12,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, *pokecache.Cache) error
 }
 
 type config struct {
@@ -46,13 +46,13 @@ func mapCommands() map[string]cliCommand {
 	}
 }
 
-func commandExit(cfg *config) error {
+func commandExit(cfg *config, cache *pokecache.Cache) error {
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(cfg *config) error {
+func commandHelp(cfg *config, cache *pokecache.Cache) error {
 	fmt.Printf("\nWelcome to the Pokedex!\n\nUsage:\n")
 	for _, c := range mapCommands() {
 		fmt.Printf("%s: %s\n", c.name, c.description)
