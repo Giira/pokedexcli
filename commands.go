@@ -12,11 +12,12 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config, *pokecache.Cache) error
+	callback    func(*config) error
 }
 
 type config struct {
 	client   pokeapi.Client
+	cache    *pokecache.Cache
 	next     *string
 	previous *string
 }
@@ -43,16 +44,21 @@ func mapCommands() map[string]cliCommand {
 			description: "Displays the previous 20 locations",
 			callback:    commandMapb,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Displays pokemon in an area",
+			callback:    commandExplore,
+		},
 	}
 }
 
-func commandExit(cfg *config, cache *pokecache.Cache) error {
+func commandExit(cfg *config) error {
 	fmt.Print("Closing the Pokedex... Goodbye!\n")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(cfg *config, cache *pokecache.Cache) error {
+func commandHelp(cfg *config) error {
 	fmt.Printf("\nWelcome to the Pokedex!\n\nUsage:\n")
 	for _, c := range mapCommands() {
 		fmt.Printf("%s: %s\n", c.name, c.description)
@@ -61,8 +67,8 @@ func commandHelp(cfg *config, cache *pokecache.Cache) error {
 	return nil
 }
 
-func commandMap(cfg *config, cache *pokecache.Cache) error {
-	locsRes, err := cfg.client.GetLocAreas(cfg.next, cache)
+func commandMap(cfg *config) error {
+	locsRes, err := cfg.client.GetLocAreas(cfg.next, cfg.cache)
 	if err != nil {
 		return err
 	}
@@ -78,12 +84,12 @@ func commandMap(cfg *config, cache *pokecache.Cache) error {
 
 }
 
-func commandMapb(cfg *config, cache *pokecache.Cache) error {
+func commandMapb(cfg *config) error {
 	if cfg.previous == nil {
 		return errors.New("you're on the first page")
 	}
 
-	locsRes, err := cfg.client.GetLocAreas(cfg.previous, cache)
+	locsRes, err := cfg.client.GetLocAreas(cfg.previous, cfg.cache)
 	if err != nil {
 		return err
 	}
@@ -95,5 +101,9 @@ func commandMapb(cfg *config, cache *pokecache.Cache) error {
 		fmt.Println(loc.Name)
 	}
 
+	return nil
+}
+
+func commandExplore(cfg *config) error {
 	return nil
 }
