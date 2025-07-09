@@ -44,6 +44,12 @@ func catchInput(cfg *config) {
 				if err != nil {
 					fmt.Println(err)
 				}
+			case "explore":
+				cfg.area = &input_slice[1]
+				err := coms["explore"].callback(cfg)
+				if err != nil {
+					fmt.Println(err)
+				}
 			default:
 				fmt.Print("Unknown command\n")
 			}

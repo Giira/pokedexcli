@@ -18,6 +18,7 @@ type cliCommand struct {
 type config struct {
 	client   pokeapi.Client
 	cache    *pokecache.Cache
+	area     *string
 	next     *string
 	previous *string
 }
@@ -105,5 +106,15 @@ func commandMapb(cfg *config) error {
 }
 
 func commandExplore(cfg *config) error {
+	areaExps, err := cfg.client.GetAreaExplore(cfg.area, cfg.cache)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Exploring %s...\n", *cfg.area)
+	fmt.Println("Found Pokemon:")
+	for _, pok := range areaExps.PokemonEncounters {
+		fmt.Printf("- %s\n", pok.Pokemon.Name)
+	}
 	return nil
 }

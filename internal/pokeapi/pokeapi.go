@@ -60,3 +60,36 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 
 	return locs, nil
 }
+
+func (c *Client) GetAreaExplore(area *string, cache *pokecache.Cache) (AreaExplore, error) {
+	url := apiUrlBase + "/location-area/" + *area
+
+	body, ok := cache.Get((url))
+	if !ok {
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return AreaExplore{}, err
+		}
+
+		res, err := c.httpclient.Do(req)
+		if err != nil {
+			return AreaExplore{}, err
+		}
+		defer res.Body.Close()
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return AreaExplore{}, err
+		}
+
+		cache.Add(url, body)
+	}
+
+	exps := AreaExplore{}
+	err := json.Unmarshal(body, &exps)
+	if err != nil {
+		return AreaExplore{}, err
+	}
+
+	return exps, nil
+}
