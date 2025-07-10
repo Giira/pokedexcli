@@ -45,13 +45,10 @@ type AreaExplore struct {
 		} `json:"pokemon"`
 		VersionDetails []struct {
 			EncounterDetails []struct {
-				Chance          int `json:"chance"`
-				ConditionValues []struct {
-					Name string `json:"name"`
-					URL  string `json:"url"`
-				} `json:"condition_values"`
-				MaxLevel int `json:"max_level"`
-				Method   struct {
+				Chance          int   `json:"chance"`
+				ConditionValues []any `json:"condition_values"`
+				MaxLevel        int   `json:"max_level"`
+				Method          struct {
 					Name string `json:"name"`
 					URL  string `json:"url"`
 				} `json:"method"`

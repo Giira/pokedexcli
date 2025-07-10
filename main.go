@@ -11,7 +11,7 @@ func main() {
 	pokeApiClient := pokeapi.NewClient()
 	cfg := &config{
 		client: pokeApiClient,
-		cache:  pokecache.NewCache(5 * time.Second),
+		cache:  pokecache.NewCache(100 * time.Second),
 	}
 	catchInput(cfg)
 }

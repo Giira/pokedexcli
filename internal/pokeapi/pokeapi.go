@@ -32,7 +32,7 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 	}
 
 	body, ok := cache.Get(url)
-	if !ok {
+	if !ok || len(body) == 0 {
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			return LocAreas{}, err
@@ -50,6 +50,14 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 		}
 
 		cache.Add(url, body)
+
+		locs := LocAreas{}
+		err = json.Unmarshal(body, &locs)
+		if err != nil {
+			return LocAreas{}, err
+		}
+
+		return locs, nil
 	}
 
 	locs := LocAreas{}
@@ -64,8 +72,8 @@ func (c *Client) GetLocAreas(sectionUrl *string, cache *pokecache.Cache) (LocAre
 func (c *Client) GetAreaExplore(area *string, cache *pokecache.Cache) (AreaExplore, error) {
 	url := apiUrlBase + "/location-area/" + *area
 
-	body, ok := cache.Get((url))
-	if !ok {
+	body, ok := cache.Get(url)
+	if !ok || len(body) == 0 {
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			return AreaExplore{}, err
@@ -83,6 +91,14 @@ func (c *Client) GetAreaExplore(area *string, cache *pokecache.Cache) (AreaExplo
 		}
 
 		cache.Add(url, body)
+
+		exps := AreaExplore{}
+		err = json.Unmarshal(body, &exps)
+		if err != nil {
+			return AreaExplore{}, err
+		}
+
+		return exps, nil
 	}
 
 	exps := AreaExplore{}
