@@ -56,6 +56,17 @@ func catchInput(cfg *config) {
 				if err != nil {
 					fmt.Println(err)
 				}
+			case "inspect":
+				cfg.pokemon = &input_slice[1]
+				err := coms["inspect"].callback(cfg)
+				if err != nil {
+					fmt.Println(err)
+				}
+			case "pokedex":
+				err := coms["pokedex"].callback(cfg)
+				if err != nil {
+					fmt.Println(err)
+				}
 			default:
 				fmt.Print("Unknown command\n")
 			}
