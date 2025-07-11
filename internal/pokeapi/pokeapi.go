@@ -109,3 +109,44 @@ func (c *Client) GetAreaExplore(area *string, cache *pokecache.Cache) (AreaExplo
 
 	return exps, nil
 }
+
+func (c *Client) GetPokemonDetails(pokemon *string, cache *pokecache.Cache) (PokemonDetails, error) {
+	url := apiUrlBase + "/pokemon/" + *pokemon
+
+	body, ok := cache.Get(url)
+	if !ok || len(body) == 0 {
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return PokemonDetails{}, err
+		}
+
+		res, err := c.httpclient.Do(req)
+		if err != nil {
+			return PokemonDetails{}, err
+		}
+		defer res.Body.Close()
+
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return PokemonDetails{}, err
+		}
+
+		cache.Add(url, body)
+
+		poke := PokemonDetails{}
+		err = json.Unmarshal(body, &poke)
+		if err != nil {
+			return PokemonDetails{}, err
+		}
+
+		return poke, nil
+	}
+
+	poke := PokemonDetails{}
+	err := json.Unmarshal(body, &poke)
+	if err != nil {
+		return PokemonDetails{}, err
+	}
+
+	return poke, nil
+}

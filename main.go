@@ -10,8 +10,9 @@ import (
 func main() {
 	pokeApiClient := pokeapi.NewClient()
 	cfg := &config{
-		client: pokeApiClient,
-		cache:  pokecache.NewCache(100 * time.Second),
+		client:  pokeApiClient,
+		cache:   pokecache.NewCache(100 * time.Second),
+		pokedex: make(map[string]pokeapi.PokemonDetails),
 	}
 	catchInput(cfg)
 }

@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/Giira/pokedexcli/internal/pokeapi"
 	"github.com/Giira/pokedexcli/internal/pokecache"
@@ -19,6 +21,8 @@ type config struct {
 	client   pokeapi.Client
 	cache    *pokecache.Cache
 	area     *string
+	pokemon  *string
+	pokedex  map[string]pokeapi.PokemonDetails
 	next     *string
 	previous *string
 }
@@ -49,6 +53,11 @@ func mapCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Displays pokemon in an area",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Attempts to catch a pokemon",
+			callback:    commandCatch,
 		},
 	}
 }
@@ -117,4 +126,23 @@ func commandExplore(cfg *config) error {
 		fmt.Printf("- %s\n", pok.Pokemon.Name)
 	}
 	return nil
+}
+
+func commandCatch(cfg *config) error {
+	fmt.Printf("Throwing a Pokeball at %s...\n", *cfg.pokemon)
+	pokeDeets, err := cfg.client.GetPokemonDetails(cfg.pokemon, cfg.cache)
+	if err != nil {
+		return err
+	}
+
+	chance := 1 - (float32(pokeDeets.BaseExperience) / 400)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	if r.Float32() < chance {
+		fmt.Printf("%s was caught!\n", *cfg.pokemon)
+		cfg.pokedex[*cfg.pokemon] = pokeDeets
+		return nil
+	} else {
+		fmt.Printf("%s escaped!\n", *cfg.pokemon)
+		return nil
+	}
 }
